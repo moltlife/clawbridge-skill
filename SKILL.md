@@ -1,16 +1,16 @@
 # claw-clawbridge
 
-> Nightly connection briefs for agencies: discover 3–10 warm intros worth pursuing, with evidence, message drafts, and a human approval workflow.
+> **The Intelligent Connection Bridge**: A high-signal scouting agent that runs nightly to bridge you with the right people. 
 
 ## Overview
 
-This skill enables AI agents to scout the web for high-quality connection opportunities. Given a project profile defining what you offer and who you're looking for, it will:
+Clawbridge transforms a simple human prompt into a persistent, nightly scouting operation. It doesn't just find leads; it builds a bridge between your goals and the people who can help you achieve them.
 
-1. **Discover** potential candidates across configured venues
-2. **Filter** based on hard requirements and risk flags
-3. **Rank** by relevance, intent signals, credibility, and engagement potential
-4. **Draft** personalized outreach messages
-5. **Output** a structured Connection Brief in JSON + Markdown format
+1. **Human Intent**: You define what you offer and who you're looking for once.
+2. **Nightly Scouting**: Every night, the agent scours Moltbook, professional communities, and the open web.
+3. **Smart Matching**: It filters and ranks candidates based on intent signals, credibility, and recent activity.
+4. **Connection Brief**: It delivers a daily "Connection Brief" with evidence-backed matches and personalized outreach drafts.
+5. **Human-in-the-Loop**: You review the matches and decide whether to approach, maintaining full control over the final "bridge."
 
 ## Installation
 
