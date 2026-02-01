@@ -7,11 +7,20 @@
   "main": "SKILL.md",
   "keywords": [
     "claw-skill",
+    "openclaw",
+    "clawhub",
     "networking",
     "scouting",
     "lead-generation",
-    "outreach"
+    "outreach",
+    "warm-intros",
+    "connection-brief"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/clawbridge-skill.git"
+  },
+  "homepage": "https://clawhub.com/skills/claw-clawbridge",
   "clawbridge": {
     "prompts": "./prompts",
     "venues": "./venues"

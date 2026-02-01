@@ -14,27 +14,96 @@ Given a project profile defining what you offer and who you're looking for, this
 4. **Draft** personalized outreach messages
 5. **Output** structured Connection Briefs for human review
 
+## Prerequisites
+
+- **Node.js ≥22** (required for OpenClaw)
+- **OpenClaw** installed and configured ([Getting Started](https://docs.openclaw.ai/start/getting-started))
+- A running OpenClaw gateway (`openclaw gateway` or `openclaw onboard --install-daemon`)
+
 ## Installation
 
-### With OpenClaw
+### Via ClawHub (Recommended)
+
+[ClawHub](https://clawhub.com) is the public skill registry for OpenClaw. Install the CLI and add this skill:
 
 ```bash
-# Add this skill to your OpenClaw configuration
-openclaw skill add claw-clawbridge
+# Install the ClawHub CLI (once)
+npm install -g clawhub
 
-# Or reference directly
-openclaw skill add https://github.com/YOUR_USERNAME/clawbridge-skill
+# Install this skill
+clawhub install claw-clawbridge
+```
+
+The skill will be installed to your `./skills` directory (or your OpenClaw workspace).
+
+### Via OpenClaw CLI (Legacy clawdbot)
+
+If you're using the legacy `clawdbot` CLI (now renamed to `openclaw`):
+
+```bash
+# From the skill registry
+clawdbot skills install claw-clawbridge
+
+# Or from GitHub directly
+clawdbot skills install github:YOUR_USERNAME/clawbridge-skill
+
+# Or from a local path
+clawdbot skills install ./path/to/clawbridge-skill
+```
+
+### Via npm/pnpm (New OpenClaw)
+
+```bash
+# Install OpenClaw globally (Node ≥22 required)
+npm install -g openclaw@latest
+
+# Run the onboarding wizard (recommended for first-time setup)
+openclaw onboard --install-daemon
+
+# List available skills
+openclaw skills list
+
+# Check skill info
+openclaw skills info claw-clawbridge
 ```
 
 ### Manual Installation
 
-1. Clone this repository
-2. Point your OpenClaw config to the `SKILL.md` file
-3. Configure your project profile (see below)
+```bash
+# Clone this repository
+git clone https://github.com/YOUR_USERNAME/clawbridge-skill.git
+
+# Copy to your OpenClaw workspace skills directory
+cp -r clawbridge-skill ~/.openclaw/workspace/skills/
+
+# Or symlink for development
+ln -s $(pwd)/clawbridge-skill ~/.openclaw/workspace/skills/claw-clawbridge
+```
+
+Then restart your OpenClaw gateway to pick up the new skill:
+
+```bash
+openclaw gateway restart
+```
+
+### Verify Installation
+
+```bash
+# Check if the skill is loaded
+openclaw skills list
+
+# Get detailed skill info
+openclaw skills info claw-clawbridge
+
+# Check skill readiness
+openclaw skills check
+```
 
 ## Quick Start
 
 1. **Create a Project Profile**
+
+Create a file called `profile.yaml` in your workspace:
 
 ```yaml
 offer: "We help B2B SaaS companies automate their content operations"
@@ -50,8 +119,11 @@ tone: "friendly, professional"
 2. **Run the Skill**
 
 ```bash
-# Via OpenClaw
-openclaw run claw-clawbridge --profile ./profile.yaml
+# Via OpenClaw agent (interactive)
+openclaw agent --message "Run the clawbridge skill with profile ./profile.yaml"
+
+# Or via the clawbridge-runner (for scheduled runs)
+# See: https://github.com/YOUR_USERNAME/clawbridge-runner
 
 # Output will be saved to:
 # - ./output/run.json (structured data)
@@ -189,5 +261,8 @@ MIT License - see LICENSE for details.
 
 ## Related Projects
 
-- **clawbridge-runner** - CLI to run this skill on a schedule
-- **clawbridge-web** - Web UI for workspace management and vault review
+- [**clawbridge-runner**](https://github.com/YOUR_USERNAME/clawbridge-runner) - CLI to run this skill on a schedule
+- [**clawbridge-web**](https://github.com/YOUR_USERNAME/clawbridge-web) - Web UI for workspace management and vault review
+- [**OpenClaw**](https://github.com/openclaw/openclaw) - The personal AI assistant platform
+- [**ClawHub**](https://clawhub.com) - Public skill registry for OpenClaw
+- [**awesome-openclaw-skills**](https://github.com/VoltAgent/awesome-openclaw-skills) - Community skill collection

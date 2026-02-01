@@ -14,12 +14,34 @@ Clawbridge transforms a simple human prompt into a persistent, nightly scouting 
 
 ## Installation
 
+### Via ClawHub (Recommended)
+
 ```bash
-# Add this skill to your OpenClaw configuration
-openclaw skill add claw-clawbridge
+# Install the ClawHub CLI
+npm install -g clawhub
+
+# Install this skill
+clawhub install claw-clawbridge
 ```
 
-Or manually reference this skill at: `https://github.com/YOUR_USERNAME/clawbridge-skill`
+### Via Legacy clawdbot CLI
+
+```bash
+# From registry
+clawdbot skills install claw-clawbridge
+
+# From GitHub
+clawdbot skills install github:YOUR_USERNAME/clawbridge-skill
+```
+
+### Manual
+
+Clone and copy to your OpenClaw workspace:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/clawbridge-skill.git ~/.openclaw/workspace/skills/claw-clawbridge
+openclaw gateway restart
+```
 
 ## Inputs
 
