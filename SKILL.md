@@ -1,6 +1,64 @@
+---
+name: clawbridge
+description: Find high-signal business partners/agencies and publish a vetted brief to your Clawbridge Vault
+metadata:
+  openclaw:
+    emoji: "🌉"
+    homepage: "https://clawbridge.cloud"
+    requires:
+      bins: ["clawbridge"]
+    install:
+      - id: "download-macos-arm64"
+        kind: "download"
+        label: "Install Clawbridge runner (macOS Apple Silicon)"
+        url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-macos-arm64"
+        bins: ["clawbridge"]
+      - id: "download-macos-x64"
+        kind: "download"
+        label: "Install Clawbridge runner (macOS Intel)"
+        url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-macos-x64"
+        bins: ["clawbridge"]
+      - id: "download-linux-x64"
+        kind: "download"
+        label: "Install Clawbridge runner (Linux x64)"
+        url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-linux-x64"
+        bins: ["clawbridge"]
+      - id: "download-linux-arm64"
+        kind: "download"
+        label: "Install Clawbridge runner (Linux ARM64)"
+        url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-linux-arm64"
+        bins: ["clawbridge"]
+---
+
 # claw-clawbridge
 
 > **The Intelligent Connection Bridge**: A high-signal scouting agent that runs nightly to bridge you with the right people. 
+
+## Quick Start (OpenClaw)
+
+If you're using OpenClaw, the agent can run Clawbridge directly:
+
+```
+/clawbridge agencies "Shopify dev agency partner in Melbourne"
+```
+
+The agent will:
+1. Check if `clawbridge` binary is installed (prompts to install if not)
+2. Execute: `clawbridge run --deliver none`
+3. Return the Vault URL with your results
+
+### Manual Setup
+
+```bash
+# 1. Install the runner
+curl -fsSL https://clawbridge.cloud/install | bash
+
+# 2. Link your workspace (get code from clawbridge.cloud)
+clawbridge link CB-XXXXXX
+
+# 3. Run
+clawbridge run
+```
 
 ## Overview
 
@@ -14,32 +72,40 @@ Clawbridge transforms a simple human prompt into a persistent, nightly scouting 
 
 ## Installation
 
-### Via ClawHub (Recommended)
+### Quick Install (Recommended)
 
 ```bash
-# Install the ClawHub CLI
-npm install -g clawhub
+# Install the Clawbridge runner
+curl -fsSL https://clawbridge.cloud/install | bash
 
-# Install this skill
-clawhub install claw-clawbridge
+# Link to your workspace (get connect code from clawbridge.cloud)
+clawbridge link CB-XXXXXX
+
+# Verify setup
+clawbridge verify
+
+# Run!
+clawbridge run
 ```
 
-### Via Legacy clawdbot CLI
+### Manual Download
+
+Download the binary for your platform from [GitHub Releases](https://github.com/moltlife/clawbridge-cli/releases):
+
+| Platform | Download |
+|----------|----------|
+| macOS (Apple Silicon) | `clawbridge-macos-arm64` |
+| macOS (Intel) | `clawbridge-macos-x64` |
+| Linux (x64) | `clawbridge-linux-x64` |
+| Linux (ARM64) | `clawbridge-linux-arm64` |
+| Windows | `clawbridge-win-x64.exe` |
+
+### OpenClaw Skill Installation
+
+If you want to use the skill prompts/schema directly with OpenClaw:
 
 ```bash
-# From registry
-clawdbot skills install claw-clawbridge
-
-# From GitHub
-clawdbot skills install github:YOUR_USERNAME/clawbridge-skill
-```
-
-### Manual
-
-Clone and copy to your OpenClaw workspace:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/clawbridge-skill.git ~/.openclaw/workspace/skills/claw-clawbridge
+git clone https://github.com/moltlife/clawbridge-skill.git ~/.openclaw/workspace/skills/claw-clawbridge
 openclaw gateway restart
 ```
 
@@ -241,7 +307,7 @@ CLAWBRIDGE_MAX_FETCHES=50            # Max page fetches per run
 The skill reads workspace config from the runner or vault:
 
 ```yaml
-workspace_id: "ws_abc123"
+workspace_id: "your_workspace_id"  # From clawbridge link or web UI
 workspace_token: "tok_..."  # For vault uploads
 delivery_target: "discord"  # or "slack" or "email"
 ```
