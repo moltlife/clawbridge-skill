@@ -1,6 +1,6 @@
 ---
 name: clawbridge
-description: Find high-signal business partners/agencies and publish a vetted brief to your Clawbridge Vault
+description: Find high-signal business connections and publish results to your Clawbridge Vault
 metadata:
   openclaw:
     emoji: "🌉"
@@ -8,319 +8,180 @@ metadata:
     requires:
       bins: ["clawbridge"]
     install:
+      - id: "install-script"
+        kind: "shell"
+        label: "Install via script (recommended)"
+        command: "curl -fsSL https://clawbridge.cloud/install | bash"
+        bins: ["clawbridge"]
       - id: "download-macos-arm64"
         kind: "download"
-        label: "Install Clawbridge runner (macOS Apple Silicon)"
+        label: "Download for macOS Apple Silicon"
         url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-macos-arm64"
         bins: ["clawbridge"]
       - id: "download-macos-x64"
         kind: "download"
-        label: "Install Clawbridge runner (macOS Intel)"
+        label: "Download for macOS Intel"
         url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-macos-x64"
         bins: ["clawbridge"]
       - id: "download-linux-x64"
         kind: "download"
-        label: "Install Clawbridge runner (Linux x64)"
+        label: "Download for Linux x64"
         url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-linux-x64"
         bins: ["clawbridge"]
       - id: "download-linux-arm64"
         kind: "download"
-        label: "Install Clawbridge runner (Linux ARM64)"
+        label: "Download for Linux ARM64"
         url: "https://github.com/moltlife/clawbridge-cli/releases/latest/download/clawbridge-linux-arm64"
         bins: ["clawbridge"]
 ---
 
-# claw-clawbridge
+# Clawbridge Skill
 
-> **The Intelligent Connection Bridge**: A high-signal scouting agent that runs nightly to bridge you with the right people. 
+> **OpenClaw adapter for Clawbridge** - Run discovery and view results in your Vault
 
-## Quick Start (OpenClaw)
+## What This Skill Does
 
-If you're using OpenClaw, the agent can run Clawbridge directly:
+This skill is a **thin adapter** that triggers the Clawbridge runner on your local machine. 
 
-```
-/clawbridge agencies "Shopify dev agency partner in Melbourne"
-```
+The skill does NOT do discovery itself. Instead it:
+1. Executes `clawbridge run` on your machine
+2. Parses the output to extract `VAULT_URL`
+3. Returns the Vault link so you can view your candidates
 
-The agent will:
-1. Check if `clawbridge` binary is installed (prompts to install if not)
-2. Execute: `clawbridge run --deliver none`
-3. Return the Vault URL with your results
+All discovery logic lives in the **clawbridge runner** (installed locally).
 
-### Manual Setup
-
-```bash
-# 1. Install the runner
-curl -fsSL https://clawbridge.cloud/install | bash
-
-# 2. Link your workspace (get code from clawbridge.cloud)
-clawbridge link CB-XXXXXX
-
-# 3. Run
-clawbridge run
-```
-
-## Overview
-
-Clawbridge transforms a simple human prompt into a persistent, nightly scouting operation. It doesn't just find leads; it builds a bridge between your goals and the people who can help you achieve them.
-
-1. **Human Intent**: You define what you offer and who you're looking for once.
-2. **Nightly Scouting**: Every night, the agent scours Moltbook, professional communities, and the open web.
-3. **Smart Matching**: It filters and ranks candidates based on intent signals, credibility, and recent activity.
-4. **Connection Brief**: It delivers a daily "Connection Brief" with evidence-backed matches and personalized outreach drafts.
-5. **Human-in-the-Loop**: You review the matches and decide whether to approach, maintaining full control over the final "bridge."
-
-## Installation
-
-### Quick Install (Recommended)
-
-```bash
-# Install the Clawbridge runner
-curl -fsSL https://clawbridge.cloud/install | bash
-
-# Link to your workspace (get connect code from clawbridge.cloud)
-clawbridge link CB-XXXXXX
-
-# Verify setup
-clawbridge verify
-
-# Run!
-clawbridge run
-```
-
-### Manual Download
-
-Download the binary for your platform from [GitHub Releases](https://github.com/moltlife/clawbridge-cli/releases):
-
-| Platform | Download |
-|----------|----------|
-| macOS (Apple Silicon) | `clawbridge-macos-arm64` |
-| macOS (Intel) | `clawbridge-macos-x64` |
-| Linux (x64) | `clawbridge-linux-x64` |
-| Linux (ARM64) | `clawbridge-linux-arm64` |
-| Windows | `clawbridge-win-x64.exe` |
-
-### OpenClaw Skill Installation
-
-If you want to use the skill prompts/schema directly with OpenClaw:
-
-```bash
-git clone https://github.com/moltlife/clawbridge-skill.git ~/.openclaw/workspace/skills/claw-clawbridge
-openclaw gateway restart
-```
-
-## Inputs
-
-The skill requires the following inputs:
-
-### 1. Project Profile (required)
-
-```yaml
-offer: "What your agency/company offers"
-ask: "What you want (partners, clients, co-marketing, advisors)"
-ideal_persona: "Exact target persona(s)"
-verticals:
-  - "keyword1"
-  - "keyword2"
-  - "keyword3"
-geo_timezone: "optional - geographic/timezone preferences"
-disallowed:
-  - "do not contact constraints"
-tone: "Short style guidance for draft messages"
-```
-
-### 2. Constraints (optional)
-
-```yaml
-no_spam_rules:
-  - "No cold outreach to competitors"
-  - "Respect unsubscribe requests"
-regions:
-  - "US"
-  - "EU"
-avoid_list:
-  - "competitor@example.com"
-  - "@spam_account"
-```
-
-### 3. Targets (optional)
-
-```yaml
-venues:
-  - "moltbook"
-  - "web"
-  - "communities"
-query_templates:
-  - "{vertical} + hiring + partner"
-  - "{vertical} + looking for + {ask}"
-```
-
-### 4. Run Budget (optional)
-
-```yaml
-max_searches: 20
-max_fetches: 50
-max_minutes: 10
-```
-
-## Tools Used
-
-This skill uses the following OpenClaw tools:
-
-| Tool | Purpose | When Used |
-|------|---------|-----------|
-| `web_search` | Discover candidate pages | Fast venue scanning |
-| `web_fetch` | Extract page content | Reading candidate profiles |
-| `browser` | JS-heavy sites | Only when fetch fails |
-
-## Security Requirements
-
-⚠️ **MUST follow these security defaults:**
-
-1. **Keep secrets out of prompts** - Pass via env/config only
-2. **Use strict tool allowlists** - Only enable `web_*` tools when actively scouting
-3. **Human-in-the-loop** - NEVER auto-send outreach in MVP
-4. **Rate limiting** - Respect run budget constraints
-5. **Avoid list enforcement** - Never contact entries in avoid_list
-
-## Execution Flow
+## Usage
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     DISCOVERY PHASE                             │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐                  │
-│  │web_search│───▶│ Filter   │───▶│ Dedupe   │                  │
-│  │ (venues) │    │ Results  │    │ & Queue  │                  │
-│  └──────────┘    └──────────┘    └──────────┘                  │
-└─────────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     ENRICHMENT PHASE                            │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐                  │
-│  │web_fetch │───▶│ Extract  │───▶│ Validate │                  │
-│  │ (pages)  │    │ Signals  │    │ Evidence │                  │
-│  └──────────┘    └──────────┘    └──────────┘                  │
-└─────────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     RANKING PHASE                               │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐                  │
-│  │  Score   │───▶│  Rank    │───▶│  Top K   │                  │
-│  │ Heuristic│    │  Sort    │    │ Selection│                  │
-│  └──────────┘    └──────────┘    └──────────┘                  │
-└─────────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     DRAFTING PHASE                              │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐                  │
-│  │  Draft   │───▶│  Review  │───▶│  Output  │                  │
-│  │ Messages │    │  Tone    │    │  Brief   │                  │
-│  └──────────┘    └──────────┘    └──────────┘                  │
-└─────────────────────────────────────────────────────────────────┘
+/clawbridge
 ```
+
+Or with a specific profile:
+
+```
+/clawbridge --profile myprofile
+```
+
+## What Happens
+
+1. **Skill checks** if `clawbridge` binary is installed
+2. **Skill runs** `clawbridge run` (or `clawbridge run --profile <name>`)
+3. **Runner executes** discovery via OpenClaw (web searches, page fetches, etc.)
+4. **Runner uploads** results to your Vault
+5. **Skill extracts** `VAULT_URL=...` from stdout
+6. **Skill replies** with the Vault link and candidate count
 
 ## Output
 
-The skill outputs a **Connection Brief** in two formats:
+The skill returns:
 
-### 1. Structured JSON (`run.json`)
+```
+✅ Found 3 candidates
 
-See `schema/connection_brief.json` for the full schema.
+View results: https://clawbridge.cloud/app/workspaces/xxx/runs/xxx
+```
 
-### 2. Human-Readable Markdown (`run.md`)
+## Setup Requirements
 
-See `examples/sample_run.md` for a sample report.
+Before using this skill, you need to:
 
-## Candidate Selection Rules
-
-### Hard Requirements (discard if missing)
-
-- ✅ At least 2 evidence URLs per candidate
-- ✅ Clear reason mapping to your `ask`
-- ✅ Last activity within N days (configurable, default 30)
-
-### Risk Flags
-
-Candidates are flagged if they exhibit:
-
-- 🟡 `low_evidence` - Fewer than expected signals
-- 🟡 `spammy_language` - Promotional or suspicious content
-- 🟡 `unclear_identity` - Cannot verify who they are
-- 🟡 `too_salesy` - Overly promotional content
-- 🟡 `irrelevant` - Weak connection to your ask
-
-## Ranking Heuristic (v1)
-
-Each candidate is scored on:
-
-| Factor | Weight | Description |
-|--------|--------|-------------|
-| Relevance | 30% | Match to keywords + ask |
-| Intent | 25% | Actively building/hiring/seeking |
-| Credibility | 20% | Consistent footprint across sources |
-| Recency | 15% | Recent activity signals |
-| Engagement | 10% | Mutual interests/communities |
-
-**Output:** Top K candidates (default K=3, configurable 5-10)
-
-## Examples
-
-See the `examples/` directory for:
-
-- `sample_run.json` - Full JSON output example
-- `sample_run.md` - Human-readable report example
-
-## Prompts
-
-The skill uses modular prompts located in `prompts/`:
-
-- `discovery.md` - How to search for candidates
-- `filtering.md` - How to apply hard requirements
-- `ranking.md` - How to score and rank candidates
-- `drafting.md` - How to write outreach messages
-
-## Venues
-
-Venue-specific search strategies are in `venues/`:
-
-- `moltbook.md` - Moltbook platform scouting
-- `web.md` - General web search strategies
-- `communities.md` - Community/forum discovery
-
-## Configuration
-
-### Environment Variables
+### 1. Install the runner
 
 ```bash
-# Optional: Override defaults
-CLAWBRIDGE_TOP_K=5                    # Number of candidates to return
-CLAWBRIDGE_RECENCY_DAYS=30           # Activity recency threshold
-CLAWBRIDGE_MAX_SEARCHES=20           # Max search queries per run
-CLAWBRIDGE_MAX_FETCHES=50            # Max page fetches per run
+curl -fsSL https://clawbridge.cloud/install | bash
 ```
 
-### Workspace Configuration
+### 2. Link your workspace
 
-The skill reads workspace config from the runner or vault:
+Get a connect code from [clawbridge.cloud](https://clawbridge.cloud) and run:
+
+```bash
+clawbridge link CB-XXXXXX
+```
+
+### 3. Configure your profile
+
+Edit `~/.clawbridge/config.yml` with your project profile:
 
 ```yaml
-workspace_id: "your_workspace_id"  # From clawbridge link or web UI
-workspace_token: "tok_..."  # For vault uploads
-delivery_target: "discord"  # or "slack" or "email"
+project_profile:
+  offer: "What you offer"
+  ask: "What you're looking for"
+  ideal_persona: "Your target contacts"
+  verticals: ["keyword1", "keyword2"]
 ```
+
+## Commands
+
+### List profiles
+
+```
+/clawbridge profiles
+```
+
+Runs `clawbridge profiles` to show available profiles.
+
+### Run discovery
+
+```
+/clawbridge
+/clawbridge --profile default
+```
+
+Runs `clawbridge run` and returns the Vault URL.
+
+## Technical Details
+
+### Skill Execution Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  User: /clawbridge                                          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Skill: exec clawbridge run                                 │
+│  (uses OpenClaw exec tool)                                  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Runner: Execute discovery workflow                         │
+│  - Load profile from config                                 │
+│  - Call OpenClaw for web search/fetch                       │
+│  - Validate + rank candidates                               │
+│  - Upload to Vault                                          │
+│  - Print VAULT_URL=...                                      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Skill: Parse stdout for VAULT_URL=                         │
+│  Reply with Vault link + summary                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Machine-Readable Output
+
+The runner prints structured output that the skill parses:
+
+```
+PROFILE=default
+JSON_PATH=/path/to/run.json
+MD_PATH=/path/to/run.md
+CANDIDATES_COUNT=3
+VAULT_URL=https://clawbridge.cloud/app/workspaces/xxx/runs/xxx
+```
+
+The skill specifically looks for:
+- `VAULT_URL=` to get the results link
+- `CANDIDATES_COUNT=` to show how many matches were found
+
+## Schema
+
+The Connection Brief schema is in `schema/connection_brief.json`. This defines the structure of results uploaded to the Vault.
 
 ## License
 
-MIT License - See LICENSE file for details.
-
-## Contributing
-
-Contributions welcome! Please read the prompts carefully and ensure any changes maintain:
-
-1. Deterministic output schema
-2. No secrets in prompts
-3. Human-in-the-loop requirement
-4. Evidence-based candidate selection
+MIT License
