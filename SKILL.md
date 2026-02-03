@@ -1,6 +1,6 @@
 ---
 name: clawbridge
-description: Trigger Clawbridge runner to find business connections
+description: Run Clawbridge discovery from OpenClaw chat
 metadata:
   openclaw:
     emoji: "🌉"
@@ -17,18 +17,26 @@ metadata:
 
 # Clawbridge Skill
 
-> **Minimal trigger** for the Clawbridge runner from OpenClaw chat.
+> **Optional chat command** to trigger Clawbridge from OpenClaw.
 
 ## What This Skill Does
 
-This skill is a **thin adapter** that triggers the Clawbridge runner on your local machine.
+This skill is a **thin trigger** — it runs the Clawbridge CLI and returns the Vault link.
 
-**The skill does NOT do discovery.** All discovery logic lives in the runner (private).
+**The skill does NOT do discovery.** All business logic lives in the runner.
 
-The skill:
-1. Runs `clawbridge run` via exec
-2. Parses `VAULT_URL=` from stdout
-3. Returns the link
+## Behavior
+
+When the user types `/clawbridge`:
+
+1. **Exec**: Run `clawbridge run` locally
+2. **Parse stdout**: Extract machine-readable lines:
+   - `VAULT_URL=...`
+   - `CANDIDATES_COUNT=...`
+   - `DISCOVERY_SOURCE=...` (optional)
+3. **Reply in chat**:
+   - "Done — found X candidates."
+   - "Review here: <vault url>"
 
 ## Usage
 
@@ -42,60 +50,63 @@ Or with a profile:
 /clawbridge --profile myprofile
 ```
 
-## How It Works
+## Example Output
 
 ```
-User: /clawbridge
-           │
-           ▼
-┌─────────────────────────────────────┐
-│  Skill: exec clawbridge run         │
-└─────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────┐
-│  Runner: Execute discovery          │
-│  - Build prompts (private logic)    │
-│  - Call OpenClaw as worker          │
-│  - Upload to Vault                  │
-│  - Print VAULT_URL=...              │
-└─────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────┐
-│  Skill: Parse VAULT_URL, reply      │
-└─────────────────────────────────────┘
+Done — found 3 candidates.
+
+Review here: https://clawbridge.cloud/app/workspaces/xxx/runs/xxx
 ```
 
-## Output
+## Prerequisites
 
-```
-✅ Found 3 candidates
+**Don't have Clawbridge yet?** Get started at:
 
-View results: https://clawbridge.cloud/app/workspaces/xxx/runs/xxx
-```
+👉 **https://clawbridge.cloud**
 
-## Setup
+1. Create an account
+2. Create a workspace
+3. Follow the setup instructions
 
-Before using this skill:
+Or if you already have an account:
 
 ```bash
 # 1. Install runner
 curl -fsSL https://clawbridge.cloud/install | bash
 
-# 2. Link workspace
+# 2. Link workspace (get code from your workspace page)
 clawbridge link CB-XXXXXX
-
-# 3. Configure profile in ~/.clawbridge/config.yml
 ```
 
-## Architecture Notes
+## Architecture
 
-- **Skill = optional trigger** (only for OpenClaw chat)
-- **Runner = product engine** (owns discovery strategy)
-- **Runner invokes OpenClaw** as a worker to perform web search/fetch
-- Discovery prompts are private (in runner, not skill)
+```
+User: /clawbridge
+        │
+        ▼
+┌───────────────────────────────┐
+│  Skill: exec clawbridge run   │
+└───────────────────────────────┘
+        │
+        ▼
+┌───────────────────────────────┐
+│  Runner: Discovery workflow   │
+│  - Build prompts (private)    │
+│  - Call OpenClaw as worker    │
+│  - Upload to Vault            │
+│  - Print VAULT_URL=...        │
+└───────────────────────────────┘
+        │
+        ▼
+┌───────────────────────────────┐
+│  Skill: Parse + reply         │
+└───────────────────────────────┘
+```
 
-## Schema
+## Mental Model
 
-The Connection Brief schema is in `schema/connection_brief.json`.
+- **Runner = product** (owns discovery strategy, prompts, ranking)
+- **Web = vault + approval** (review candidates, approve outreach)
+- **Skill = chat shortcut** (optional convenience)
+
+You don't need this skill to use Clawbridge. Run `clawbridge run` directly from terminal.

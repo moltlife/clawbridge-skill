@@ -1,63 +1,29 @@
 # Clawbridge Skill
 
-> **Minimal OpenClaw skill** to trigger the Clawbridge runner from chat.
+> **Optional:** Adds `/clawbridge` chat command to OpenClaw. It calls the runner.
 
-## What This Is
+## Do You Need This?
 
-This skill is a **thin adapter** that lets you trigger Clawbridge from OpenClaw chat:
-
-```
-/clawbridge
-```
-
-**The skill does NOT do discovery.** All discovery logic lives in the [clawbridge-runner](https://github.com/moltlife/clawbridge-runner) (private).
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  User: /clawbridge                                          │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Skill: exec clawbridge run                                 │
-│  (this repo - just a trigger)                               │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Runner: Execute discovery workflow                         │
-│  - Build prompts (private logic)                            │
-│  - Call OpenClaw/Clawdbot/Moltbot as worker                 │
-│  - Validate candidates                                      │
-│  - Upload to Vault                                          │
-│  - Print VAULT_URL=...                                      │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Skill: Parse VAULT_URL, reply with link                    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key points:**
-- **Skill = optional trigger** (only for OpenClaw chat integration)
-- **Runner = product engine** (owns discovery strategy, prompts, ranking)
-- **Runner invokes OpenClaw** as a worker to perform web search/fetch
-
-## Setup
-
-Before using this skill, you need the Clawbridge runner installed:
+**Most users don't need this skill.** Use the CLI directly:
 
 ```bash
-# 1. Install runner
-curl -fsSL https://clawbridge.cloud/install | bash
+clawbridge run
+```
 
-# 2. Link your workspace (get code from clawbridge.cloud)
-clawbridge link CB-XXXXXX
+Only install this skill if you want to trigger Clawbridge from OpenClaw chat.
 
-# 3. Configure your profile in ~/.clawbridge/config.yml
+## Install
+
+**First, set up Clawbridge runner:**
+
+1. Go to **https://clawbridge.cloud**
+2. Create an account and workspace
+3. Follow the install instructions
+
+**Then install this skill:**
+
+```bash
+openclaw skills install claw-clawbridge
 ```
 
 ## Usage
@@ -68,48 +34,18 @@ In OpenClaw chat:
 /clawbridge
 ```
 
-Or with a specific profile:
+## What It Does
 
-```
-/clawbridge --profile myprofile
-```
+1. Runs `clawbridge run`
+2. Parses output (`VAULT_URL=`, `CANDIDATES_COUNT=`)
+3. Replies with candidate count and Vault link
 
-## Output
+## Architecture
 
-The skill returns:
+- **Skill = thin trigger** (this repo)
+- **Runner = product engine** (private, owns all logic)
 
-```
-✅ Found 3 candidates
-
-View results: https://clawbridge.cloud/app/workspaces/xxx/runs/xxx
-```
-
-## Files
-
-```
-clawbridge-skill/
-├── SKILL.md           # Skill definition for OpenClaw
-├── README.md          # This file
-├── schema/
-│   └── connection_brief.json    # Output schema
-└── examples/
-    ├── sample_run.json
-    └── sample_run.md
-```
-
-## Schema
-
-The Connection Brief schema (`schema/connection_brief.json`) defines the structure of discovery results uploaded to the Vault.
-
-## Direct CLI Usage
-
-You don't need this skill to use Clawbridge. You can run the runner directly:
-
-```bash
-clawbridge run
-```
-
-The skill only exists if you want to trigger runs from OpenClaw chat.
+The skill does NOT contain discovery prompts, venues, or business logic.
 
 ## License
 
