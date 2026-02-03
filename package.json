@@ -1,7 +1,7 @@
 {
-  "name": "claw-clawbridge",
+  "name": "clawbridge-skill-latest",
   "display_name": "Clawbridge",
-  "slug": "claw-clawbridge",
+  "slug": "clawbridge-skill-latest",
   "version": "1.0.0",
   "description": "Chat command to trigger Clawbridge runner. Optional convenience for OpenClaw users.",
   "main": "SKILL.md",

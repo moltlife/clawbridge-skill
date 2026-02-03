@@ -23,7 +23,7 @@ Only install this skill if you want to trigger Clawbridge from OpenClaw chat.
 **Then install this skill:**
 
 ```bash
-openclaw skills install claw-clawbridge
+openclaw skills install clawbridge-skill-latest
 ```
 
 ## Usage
